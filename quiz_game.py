@@ -1,22 +1,19 @@
-import json
-from pathlib import Path
-
 from default_quizzes import create_default_quizzes
 from quiz import Quiz
-
-# 실행 위치와 관계없이 프로젝트 루트의 state.json을 사용한다.
-STATE_PATH = Path(__file__).parent / "state.json"
+from quiz_storage import STATE_PATH, QuizStorage
 
 
 class QuizGame:
-    """메뉴와 게임 진행, 데이터 저장을 관리한다."""
+    """메뉴와 게임 진행을 관리한다. 파일 처리는 QuizStorage에 맡긴다."""
 
     LINE = "=" * 40
+    THIN_LINE = "-" * 40
+    NO_QUIZ_MESSAGE = "📭 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요."
     MENU_ITEMS = ("퀴즈 풀기", "퀴즈 추가", "퀴즈 목록", "점수 확인", "종료")
     EXIT_NUMBER = len(MENU_ITEMS)
 
     def __init__(self, state_path=STATE_PATH):
-        self.state_path = Path(state_path)
+        self.storage = QuizStorage(state_path)
         self.reset_state()
 
     def reset_state(self):
@@ -95,14 +92,14 @@ class QuizGame:
     def play(self):
         """모든 퀴즈를 차례로 출제하고 결과를 보여 준다."""
         if not self.quizzes:
-            print("📭 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요.")
+            print(self.NO_QUIZ_MESSAGE)
             return
 
         total = len(self.quizzes)
         correct = 0
         print(f"\n📝 퀴즈를 시작합니다! (총 {total}문제)\n")
         for number, quiz in enumerate(self.quizzes, start=1):
-            print("-" * 40)
+            print(self.THIN_LINE)
             quiz.display(number)
             selected = self.read_number("정답 입력: ", 1, 4)
             if quiz.is_correct(selected):
@@ -157,21 +154,19 @@ class QuizGame:
     def list_quizzes(self):
         """등록된 퀴즈의 문제를 번호와 함께 출력한다."""
         if not self.quizzes:
-            print("📭 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요.")
+            print(self.NO_QUIZ_MESSAGE)
             return
 
         print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)\n")
-        print("-" * 40)
+        print(self.THIN_LINE)
         for number, quiz in enumerate(self.quizzes, start=1):
             print(f"[{number}] {quiz.question}")
-        print("-" * 40)
+        print(self.THIN_LINE)
 
     def load(self):
         """state.json을 불러온다. 실패하면 기본 데이터로 시작한다."""
         try:
-            with open(self.state_path, "r", encoding="utf-8") as file:
-                data = json.load(file)
-            self.apply_state(data)
+            self.apply_state(self.storage.read())
         except FileNotFoundError:
             self.reset_state()
             print("📂 저장된 데이터가 없어 기본 퀴즈로 시작합니다.")
@@ -203,7 +198,8 @@ class QuizGame:
         self.best_correct = best_correct
         self.best_total = best_total
 
-    def check_record(self, value, high):
+    @staticmethod
+    def check_record(value, high):
         """기록 값이 None이거나 0 이상의 정수인지 확인한다."""
         if value is None:
             return None
@@ -219,12 +215,8 @@ class QuizGame:
             "best_correct": self.best_correct,
             "best_total": self.best_total,
         }
-        # 임시 파일에 다 쓴 뒤 교체해서, 저장 중 문제가 생겨도 기존 파일을 지킨다.
-        temp_path = self.state_path.with_name(self.state_path.name + ".tmp")
         try:
-            with open(temp_path, "w", encoding="utf-8") as file:
-                json.dump(state, file, ensure_ascii=False, indent=4)
-            temp_path.replace(self.state_path)
+            self.storage.write(state)
         except OSError as error:
             print(f"⚠️ 데이터를 저장하지 못했습니다. ({error})")
             return False

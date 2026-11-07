@@ -17,7 +17,7 @@
 - [x] 퀴즈 추가
 - [x] 퀴즈 목록
 - [x] 점수 확인
-- [ ] QuizGame 구조 정리
+- [x] QuizGame 구조 정리
 - [ ] README 작성
 - [ ] clone/pull 실습
 - [ ] 최종 검증과 스크린샷
@@ -109,3 +109,15 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 | 최고 점수보다 낮거나 같음 | 갱신하지 않음 |
 | 최고 점수보다 높음 | 갱신 후 저장 |
 | 재실행 | 최고 점수 유지 |
+
+### 3.10 QuizGame 구조 정리
+
+`QuizGame`이 맡던 JSON 파일 읽기와 쓰기를 `quiz_storage.py`의 `QuizStorage` 클래스로 분리했습니다. `QuizGame`의 `load()`와 `save()`는 그대로 두고, 게임 상태를 검사하고 안내 문구를 출력하는 일만 맡습니다. 반복되던 구분선과 안내 문구는 클래스 속성으로 모았습니다.
+
+| 클래스 | 파일 | 역할 |
+| --- | --- | --- |
+| `Quiz` | `quiz.py` | 문제 하나의 데이터, 출력, 정답 확인, 딕셔너리 변환 |
+| `QuizGame` | `quiz_game.py` | 메뉴, 입력 검증, 게임 진행, 점수 관리 |
+| `QuizStorage` | `quiz_storage.py` | `state.json` 읽기와 쓰기 |
+
+리팩터링 전후로 같은 입력을 넣어 전체 출력을 비교했고 완전히 일치했습니다. 결과는 [docs/logs/10-refactor.log](docs/logs/10-refactor.log)에 있습니다.
