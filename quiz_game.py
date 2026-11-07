@@ -88,7 +88,7 @@ class QuizGame:
         elif choice == 2:
             self.add_quiz()
         elif choice == 3:
-            print("🚧 퀴즈 목록은 준비 중입니다.")
+            self.list_quizzes()
         elif choice == 4:
             print("🚧 점수 확인은 준비 중입니다.")
 
@@ -130,6 +130,18 @@ class QuizGame:
             print("\n✅ 퀴즈가 추가되었습니다!")
         else:
             print("\n⚠️ 퀴즈는 추가했지만 파일에 저장하지 못해 종료하면 사라질 수 있습니다.")
+
+    def list_quizzes(self):
+        """등록된 퀴즈의 문제를 번호와 함께 출력한다."""
+        if not self.quizzes:
+            print("📭 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요.")
+            return
+
+        print(f"\n📋 등록된 퀴즈 목록 (총 {len(self.quizzes)}개)\n")
+        print("-" * 40)
+        for number, quiz in enumerate(self.quizzes, start=1):
+            print(f"[{number}] {quiz.question}")
+        print("-" * 40)
 
     def load(self):
         """state.json을 불러온다. 실패하면 기본 데이터로 시작한다."""
