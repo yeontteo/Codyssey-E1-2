@@ -90,7 +90,7 @@ class QuizGame:
         elif choice == 3:
             self.list_quizzes()
         elif choice == 4:
-            print("🚧 점수 확인은 준비 중입니다.")
+            self.show_score()
 
     def play(self):
         """모든 퀴즈를 차례로 출제하고 결과를 보여 준다."""
@@ -113,10 +113,33 @@ class QuizGame:
         self.show_result(correct, total)
 
     def show_result(self, correct, total):
-        """맞힌 개수를 100점 만점 점수로 바꿔 출력한다."""
+        """점수를 계산해 출력하고, 최고 점수를 넘으면 갱신해 저장한다."""
         score = round(correct / total * 100)
         print(self.LINE)
         print(f"🏆 결과: {total}문제 중 {correct}문제 정답! ({score}점)")
+        if self.update_best_score(score, correct, total):
+            print("🎉 새로운 최고 점수입니다!")
+            self.save()
+        print(self.LINE)
+
+    def update_best_score(self, score, correct, total):
+        """최고 점수보다 높으면 기록을 바꾸고 True를 돌려준다."""
+        if self.best_score is not None and score <= self.best_score:
+            return False
+        self.best_score = score
+        self.best_correct = correct
+        self.best_total = total
+        return True
+
+    def show_score(self):
+        """최고 점수를 출력한다."""
+        if self.best_score is None:
+            print("📭 아직 퀴즈를 푼 기록이 없습니다.")
+        elif self.best_correct is None or self.best_total is None:
+            print(f"🏆 최고 점수: {self.best_score}점")
+        else:
+            print(f"🏆 최고 점수: {self.best_score}점 "
+                  f"({self.best_total}문제 중 {self.best_correct}문제 정답)")
 
     def add_quiz(self):
         """새 퀴즈를 입력받아 목록에 추가하고 파일에 저장한다."""
