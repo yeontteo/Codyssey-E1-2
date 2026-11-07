@@ -1,0 +1,21 @@
+$ git init -b main
+Initialized empty Git repository in C:/Users/yeonseo/codyssey/E1-2/.git/
+
+$ git remote add origin https://github.com/yeontteo/Codyssey-E1-2.git
+
+$ git remote -v
+origin	https://github.com/yeontteo/Codyssey-E1-2.git (fetch)
+origin	https://github.com/yeontteo/Codyssey-E1-2.git (push)
+
+$ git pull origin main
+From https://github.com/yeontteo/Codyssey-E1-2
+ * branch            main       -> FETCH_HEAD
+ * [new branch]      main       -> origin/main
+
+$ git log --oneline
+8181ca6 Initial commit
+
+$ git status --short --branch
+## main
+?? docs/
+
