@@ -1,0 +1,66 @@
+# 1. 미션 저장소를 별도 디렉터리에 복제
+$ git clone https://github.com/yeontteo/Codyssey-E1-2.git E1-2-clone
+Cloning into 'E1-2-clone'...
+
+$ git log --oneline -3
+f9b3799 Docs: README 작성
+896c1b9 Refactor: QuizGame 책임 분리
+584364d Feat: 최고 점수 저장과 확인 구현
+
+$ git remote -v
+origin	https://github.com/yeontteo/Codyssey-E1-2.git (fetch)
+origin	https://github.com/yeontteo/Codyssey-E1-2.git (push)
+
+# 복제본에서 README 실행 방법대로 실행 (5번 종료)
+$ printf "5\n" | python main.py
+📂 저장된 데이터가 없어 기본 퀴즈로 시작합니다.
+선택: 👋 프로그램을 종료합니다.
+
+# 2. 복제본에서 README에 내용을 추가하고 commit, push
+$ git status --short
+ M README.md
+
+$ git commit -m "Docs: clone 실습 기록 추가" -m "복제한 저장소에서 README에 clone/pull 실습 내용을 추가한다."
+[main 848af97] Docs: clone 실습 기록 추가
+ 1 file changed, 4 insertions(+)
+
+$ git push origin main
+To https://github.com/yeontteo/Codyssey-E1-2.git
+   f9b3799..848af97  main -> main
+
+$ git reflog -3
+848af97 HEAD@{0}: commit: Docs: clone 실습 기록 추가
+f9b3799 HEAD@{1}: clone: from https://github.com/yeontteo/Codyssey-E1-2.git
+
+# 3. 기존 작업 폴더에서 pull 전 상태
+$ git log --oneline -2
+f9b3799 Docs: README 작성
+896c1b9 Refactor: QuizGame 책임 분리
+
+$ grep -c 'clone/pull 실습$' README.md
+1
+# 1은 체크리스트 줄이며, 8.11 문단은 아직 없다
+
+# 4. 기존 작업 폴더에서 pull
+$ git pull origin main
+From https://github.com/yeontteo/Codyssey-E1-2
+ * branch            main       -> FETCH_HEAD
+   f9b3799..848af97  main       -> origin/main
+Updating f9b3799..848af97
+Fast-forward
+ README.md | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+# 5. pull 결과 확인
+$ git log --oneline -2
+848af97 Docs: clone 실습 기록 추가
+f9b3799 Docs: README 작성
+
+$ grep -n 'clone/pull 실습$' README.md
+110:- [ ] clone/pull 실습
+213:### 8.11 clone/pull 실습
+
+$ git reflog -2
+848af97 HEAD@{0}: pull origin main: Fast-forward
+f9b3799 HEAD@{1}: commit: Docs: README 작성
+

@@ -107,7 +107,7 @@ python main.py
 - [x] 점수 확인
 - [x] QuizGame 구조 정리
 - [x] README 작성
-- [ ] clone/pull 실습
+- [x] clone/pull 실습
 - [ ] 최종 검증과 스크린샷
 
 ## 8. 수행 기록
@@ -213,6 +213,30 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 ### 8.11 clone/pull 실습
 
 저장소를 별도 폴더에 `git clone`으로 복제해 이 문단을 추가하고, 기존 작업 폴더에서 `git pull`로 받았습니다.
+
+복제본에서 README의 실행 방법대로 프로그램이 실행되는 것도 확인했습니다. clone과 pull은 GitHub 커밋 기록에 남지 않아서, 명령 출력과 `git reflog`를 [docs/logs/12-clone-pull.log](docs/logs/12-clone-pull.log)에 저장했습니다.
+
+```console
+$ git reflog -3
+848af97 HEAD@{0}: commit: Docs: clone 실습 기록 추가
+f9b3799 HEAD@{1}: clone: from https://github.com/yeontteo/Codyssey-E1-2.git
+
+$ git pull origin main
+Updating f9b3799..848af97
+Fast-forward
+ README.md | 4 ++++
+ 1 file changed, 4 insertions(+)
+```
+
+| 명령 | 역할 | 사용한 곳 |
+| --- | --- | --- |
+| `git init` | 폴더를 Git 저장소로 만듦 | [8.1](#81-git-저장소-설정) |
+| `git add` | 커밋에 넣을 변경을 고름 | 모든 단계 |
+| `git commit` | 고른 변경을 이력으로 저장 | 모든 단계 |
+| `git push` | 로컬 커밋을 원격에 올림 | 모든 단계 |
+| `git pull` | 원격 변경을 받아 합침 | [8.1](#81-git-저장소-설정), 이 문단 |
+| `git checkout` | 브랜치를 만들거나 이동 | [8.5](#85-퀴즈-풀기) |
+| `git clone` | 원격 저장소를 복제 | 이 문단 |
 
 ## 9. 트러블슈팅
 
