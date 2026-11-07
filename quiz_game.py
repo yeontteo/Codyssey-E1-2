@@ -1,23 +1,40 @@
+import json
+from pathlib import Path
+
 from default_quizzes import create_default_quizzes
+from quiz import Quiz
+
+# 실행 위치와 관계없이 프로젝트 루트의 state.json을 사용한다.
+STATE_PATH = Path(__file__).parent / "state.json"
 
 
 class QuizGame:
-    """메뉴와 게임 진행을 관리한다."""
+    """메뉴와 게임 진행, 데이터 저장을 관리한다."""
 
     LINE = "=" * 40
     MENU_ITEMS = ("퀴즈 풀기", "퀴즈 추가", "퀴즈 목록", "점수 확인", "종료")
     EXIT_NUMBER = len(MENU_ITEMS)
 
-    def __init__(self):
+    def __init__(self, state_path=STATE_PATH):
+        self.state_path = Path(state_path)
+        self.reset_state()
+
+    def reset_state(self):
+        """기본 퀴즈와 기록 없음 상태로 되돌린다."""
         self.quizzes = create_default_quizzes()
+        self.best_score = None    # 최고 점수 (아직 풀지 않았으면 None)
+        self.best_correct = None  # 최고 점수를 낸 게임의 정답 수
+        self.best_total = None    # 최고 점수를 낸 게임의 문제 수
 
     def run(self):
-        """프로그램을 실행하고, 입력이 중단되어도 안전하게 끝낸다."""
+        """프로그램을 실행하고, 입력이 중단되어도 저장 후 안전하게 끝낸다."""
         try:
             self.show_title()
+            self.load()
             self.menu_loop()
         except (KeyboardInterrupt, EOFError):
             print("\n⚠️ 입력이 중단되어 프로그램을 종료합니다.")
+        self.save()
 
     def menu_loop(self):
         """종료를 선택할 때까지 메뉴를 반복한다."""
@@ -92,3 +109,67 @@ class QuizGame:
         score = round(correct / total * 100)
         print(self.LINE)
         print(f"🏆 결과: {total}문제 중 {correct}문제 정답! ({score}점)")
+
+    def load(self):
+        """state.json을 불러온다. 실패하면 기본 데이터로 시작한다."""
+        try:
+            with open(self.state_path, "r", encoding="utf-8") as file:
+                data = json.load(file)
+            self.apply_state(data)
+        except FileNotFoundError:
+            self.reset_state()
+            print("📂 저장된 데이터가 없어 기본 퀴즈로 시작합니다.")
+        except ValueError:
+            # 깨진 JSON, 잘못된 인코딩, 형식 오류는 모두 ValueError 계열이다.
+            self.reset_state()
+            print("⚠️ 저장 파일이 손상되어 기본 퀴즈로 복구합니다.")
+        except OSError as error:
+            self.reset_state()
+            print(f"⚠️ 저장 파일을 읽지 못해 기본 퀴즈로 시작합니다. ({error})")
+        else:
+            best = "기록 없음" if self.best_score is None else f"{self.best_score}점"
+            print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {best})")
+
+    def apply_state(self, data):
+        """불러온 데이터를 검사한 뒤 게임 상태에 반영한다."""
+        if not isinstance(data, dict) or "quizzes" not in data or "best_score" not in data:
+            raise ValueError("필수 항목이 없습니다.")
+        if not isinstance(data["quizzes"], list):
+            raise ValueError("퀴즈 목록 형식이 올바르지 않습니다.")
+
+        quizzes = [Quiz.from_dict(item) for item in data["quizzes"]]
+        best_score = self.check_record(data["best_score"], 100)
+        best_correct = self.check_record(data.get("best_correct"), None)
+        best_total = self.check_record(data.get("best_total"), None)
+
+        self.quizzes = quizzes
+        self.best_score = best_score
+        self.best_correct = best_correct
+        self.best_total = best_total
+
+    def check_record(self, value, high):
+        """기록 값이 None이거나 0 이상의 정수인지 확인한다."""
+        if value is None:
+            return None
+        if type(value) is not int or value < 0 or (high is not None and value > high):
+            raise ValueError("기록 값이 올바르지 않습니다.")
+        return value
+
+    def save(self):
+        """게임 상태를 state.json에 저장하고 성공 여부를 돌려준다."""
+        state = {
+            "quizzes": [quiz.to_dict() for quiz in self.quizzes],
+            "best_score": self.best_score,
+            "best_correct": self.best_correct,
+            "best_total": self.best_total,
+        }
+        # 임시 파일에 다 쓴 뒤 교체해서, 저장 중 문제가 생겨도 기존 파일을 지킨다.
+        temp_path = self.state_path.with_name(self.state_path.name + ".tmp")
+        try:
+            with open(temp_path, "w", encoding="utf-8") as file:
+                json.dump(state, file, ensure_ascii=False, indent=4)
+            temp_path.replace(self.state_path)
+        except OSError as error:
+            print(f"⚠️ 데이터를 저장하지 못했습니다. ({error})")
+            return False
+        return True
