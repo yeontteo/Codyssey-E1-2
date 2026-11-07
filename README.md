@@ -11,7 +11,7 @@
 - [x] Git 저장소 설정 (`.gitignore`, `README.md`, 첫 커밋과 푸시)
 - [x] 메뉴와 공통 입력 처리
 - [x] Quiz 클래스
-- [ ] 기본 퀴즈 데이터 5개 이상
+- [x] 기본 퀴즈 데이터 5개 이상
 - [ ] 퀴즈 풀기 (브랜치 생성과 병합)
 - [ ] `state.json` 저장/불러오기
 - [ ] 퀴즈 추가
@@ -48,3 +48,7 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 ### 3.3 Quiz 클래스
 
 `quiz.py`의 `Quiz` 클래스는 문제 하나를 표현합니다. 속성은 문제(`question`), 선택지 4개(`choices`), 정답 번호 1~4(`answer`)이고, `display()`가 문제를 출력하고 `is_correct()`가 정답을 확인합니다. 전체 출력은 [docs/logs/03-quiz-class.log](docs/logs/03-quiz-class.log)에 있습니다.
+
+### 3.4 기본 퀴즈 데이터
+
+`default_quizzes.py`의 `create_default_quizzes()`가 넌센스 퀴즈 5개를 `Quiz` 객체로 만들어 돌려주고, `QuizGame`이 시작할 때 이 목록을 불러옵니다. 호출할 때마다 새 목록을 만들기 때문에, 게임 중 퀴즈 목록이 바뀌어도 기본 데이터는 영향을 받지 않습니다. 전체 출력은 [docs/logs/04-default-quizzes.log](docs/logs/04-default-quizzes.log)에 있습니다.

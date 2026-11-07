@@ -1,9 +1,15 @@
+from default_quizzes import create_default_quizzes
+
+
 class QuizGame:
     """메뉴와 게임 진행을 관리한다."""
 
     LINE = "=" * 40
     MENU_ITEMS = ("퀴즈 풀기", "퀴즈 추가", "퀴즈 목록", "점수 확인", "종료")
     EXIT_NUMBER = len(MENU_ITEMS)
+
+    def __init__(self):
+        self.quizzes = create_default_quizzes()
 
     def run(self):
         """프로그램을 실행하고, 입력이 중단되어도 안전하게 끝낸다."""
