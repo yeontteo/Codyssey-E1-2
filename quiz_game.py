@@ -68,7 +68,11 @@ class QuizGame:
             print("🚧 점수 확인은 준비 중입니다.")
 
     def play(self):
-        """모든 퀴즈를 차례로 출제하고 맞힌 개수를 센다."""
+        """모든 퀴즈를 차례로 출제하고 결과를 보여 준다."""
+        if not self.quizzes:
+            print("📭 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요.")
+            return
+
         total = len(self.quizzes)
         correct = 0
         print(f"\n📝 퀴즈를 시작합니다! (총 {total}문제)\n")
@@ -81,3 +85,10 @@ class QuizGame:
                 correct += 1
             else:
                 print(f"❌ 오답입니다. 정답은 {quiz.answer}번입니다.\n")
+        self.show_result(correct, total)
+
+    def show_result(self, correct, total):
+        """맞힌 개수를 100점 만점 점수로 바꿔 출력한다."""
+        score = round(correct / total * 100)
+        print(self.LINE)
+        print(f"🏆 결과: {total}문제 중 {correct}문제 정답! ({score}점)")
