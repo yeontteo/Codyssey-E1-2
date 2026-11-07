@@ -73,12 +73,20 @@ class QuizGame:
                 return number
             print(guide)
 
+    def read_text(self, prompt):
+        """비어 있지 않은 문자열을 입력받을 때까지 반복한다."""
+        while True:
+            text = input(prompt).strip()
+            if text:
+                return text
+            print("⚠️ 입력이 비어 있습니다. 내용을 입력하세요.")
+
     def handle_choice(self, choice):
         """선택한 번호에 맞는 기능을 실행한다."""
         if choice == 1:
             self.play()
         elif choice == 2:
-            print("🚧 퀴즈 추가는 준비 중입니다.")
+            self.add_quiz()
         elif choice == 3:
             print("🚧 퀴즈 목록은 준비 중입니다.")
         elif choice == 4:
@@ -109,6 +117,19 @@ class QuizGame:
         score = round(correct / total * 100)
         print(self.LINE)
         print(f"🏆 결과: {total}문제 중 {correct}문제 정답! ({score}점)")
+
+    def add_quiz(self):
+        """새 퀴즈를 입력받아 목록에 추가하고 파일에 저장한다."""
+        print("\n📌 새로운 퀴즈를 추가합니다.\n")
+        question = self.read_text("문제를 입력하세요: ")
+        choices = [self.read_text(f"선택지 {number}: ") for number in range(1, 5)]
+        answer = self.read_number("정답 번호 (1-4): ", 1, 4)
+
+        self.quizzes.append(Quiz(question, choices, answer))
+        if self.save():
+            print("\n✅ 퀴즈가 추가되었습니다!")
+        else:
+            print("\n⚠️ 퀴즈는 추가했지만 파일에 저장하지 못해 종료하면 사라질 수 있습니다.")
 
     def load(self):
         """state.json을 불러온다. 실패하면 기본 데이터로 시작한다."""
