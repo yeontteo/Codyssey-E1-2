@@ -59,10 +59,36 @@ class QuizGame:
     def handle_choice(self, choice):
         """선택한 번호에 맞는 기능을 실행한다."""
         if choice == 1:
-            print("🚧 퀴즈 풀기는 준비 중입니다.")
+            self.play()
         elif choice == 2:
             print("🚧 퀴즈 추가는 준비 중입니다.")
         elif choice == 3:
             print("🚧 퀴즈 목록은 준비 중입니다.")
         elif choice == 4:
             print("🚧 점수 확인은 준비 중입니다.")
+
+    def play(self):
+        """모든 퀴즈를 차례로 출제하고 결과를 보여 준다."""
+        if not self.quizzes:
+            print("📭 등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요.")
+            return
+
+        total = len(self.quizzes)
+        correct = 0
+        print(f"\n📝 퀴즈를 시작합니다! (총 {total}문제)\n")
+        for number, quiz in enumerate(self.quizzes, start=1):
+            print("-" * 40)
+            quiz.display(number)
+            selected = self.read_number("정답 입력: ", 1, 4)
+            if quiz.is_correct(selected):
+                print("✅ 정답입니다!\n")
+                correct += 1
+            else:
+                print(f"❌ 오답입니다. 정답은 {quiz.answer}번입니다.\n")
+        self.show_result(correct, total)
+
+    def show_result(self, correct, total):
+        """맞힌 개수를 100점 만점 점수로 바꿔 출력한다."""
+        score = round(correct / total * 100)
+        print(self.LINE)
+        print(f"🏆 결과: {total}문제 중 {correct}문제 정답! ({score}점)")
