@@ -56,7 +56,8 @@ python main.py
 ├── README.md
 └── docs/
     ├── mission.md      # 미션 원문
-    └── logs/           # 단계별 실행 결과 로그
+    ├── logs/           # 단계별 실행 결과 로그
+    └── screenshots/    # 실행 화면
 ```
 
 ## 6. 데이터 파일 설명
@@ -94,7 +95,45 @@ python main.py
 | `best_correct` | int 또는 null | 최고 점수를 낸 게임의 정답 수 |
 | `best_total` | int 또는 null | 최고 점수를 낸 게임의 문제 수 |
 
-## 7. 수행 체크리스트
+## 7. 실행 화면
+
+VS Code 터미널에서 직접 실행한 화면입니다.
+
+**개발 환경** (Python 버전, Git 사용자 설정)
+
+![개발 환경](docs/screenshots/env.png)
+
+**메뉴**
+
+![메뉴](docs/screenshots/menu.png)
+
+**퀴즈 풀기**: 시작 화면과 마지막 문제, 결과입니다. 이전 최고 점수와 같은 100점이라 최고 점수는 갱신되지 않았습니다.
+
+![퀴즈 풀기 시작](docs/screenshots/play_start.png)
+
+![퀴즈 풀기 결과](docs/screenshots/play.png)
+
+**퀴즈 추가**
+
+![퀴즈 추가](docs/screenshots/add_quiz.png)
+
+**퀴즈 목록**: 추가한 6번 퀴즈가 포함되어 있습니다.
+
+![퀴즈 목록](docs/screenshots/list.png)
+
+**점수 확인과 종료**
+
+![점수 확인](docs/screenshots/score.png)
+
+**Ctrl+C 입력 시 종료**: 오류 없이 안내 후 종료합니다.
+
+![Ctrl+C 종료](docs/screenshots/ctrl_c.png)
+
+**Git 커밋 그래프** (`git --no-pager log --oneline --graph`): `feature/play-quiz` 브랜치를 만들어 작업하고 `main`에 병합한 기록이 보입니다.
+
+![Git 커밋 그래프](docs/screenshots/git_log.png)
+
+## 8. 수행 체크리스트
 
 - [x] Git 저장소 설정 (`.gitignore`, `README.md`, 첫 커밋과 푸시)
 - [x] 메뉴와 공통 입력 처리
@@ -108,17 +147,17 @@ python main.py
 - [x] QuizGame 구조 정리
 - [x] README 작성
 - [x] clone/pull 실습
-- [ ] 최종 검증과 스크린샷
+- [x] 최종 검증과 스크린샷
 
-## 8. 수행 기록
+## 9. 수행 기록
 
-### 8.1 Git 저장소 설정
+### 9.1 Git 저장소 설정
 
 GitHub 저장소에 `Initial commit`이 이미 있어서, 로컬에서 `git init`으로 저장소를 만들고 원격을 연결한 뒤 `git pull`로 받았습니다. 전체 출력은 [docs/logs/01-git-setup.log](docs/logs/01-git-setup.log)에 있습니다.
 
 `state.json`은 실행할 때 내용이 바뀌는 데이터이고, 없으면 기본 퀴즈로 시작하도록 만들 예정이라 `.gitignore`로 제외했습니다.
 
-### 8.2 메뉴와 공통 입력 처리
+### 9.2 메뉴와 공통 입력 처리
 
 `main.py`는 프로그램을 시작만 하고, 메뉴와 입력 처리는 `quiz_game.py`의 `QuizGame` 클래스가 맡습니다. 숫자 입력은 `read_number()` 하나로 처리해서 이후 정답 입력에서도 같은 검증을 사용합니다. 아직 만들지 않은 기능은 준비 중 안내를 출력합니다. 전체 출력은 [docs/logs/02-menu.log](docs/logs/02-menu.log)에 있습니다.
 
@@ -133,15 +172,15 @@ GitHub 저장소에 `Initial commit`이 이미 있어서, 로컬에서 `git init
 
 Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때 이모지를 출력하다가 `UnicodeEncodeError`가 발생해서, `main.py` 시작부에서 입출력 인코딩을 UTF-8로 맞췄습니다.
 
-### 8.3 Quiz 클래스
+### 9.3 Quiz 클래스
 
 `quiz.py`의 `Quiz` 클래스는 문제 하나를 표현합니다. 속성은 문제(`question`), 선택지 4개(`choices`), 정답 번호 1~4(`answer`)이고, `display()`가 문제를 출력하고 `is_correct()`가 정답을 확인합니다. 전체 출력은 [docs/logs/03-quiz-class.log](docs/logs/03-quiz-class.log)에 있습니다.
 
-### 8.4 기본 퀴즈 데이터
+### 9.4 기본 퀴즈 데이터
 
 `default_quizzes.py`의 `create_default_quizzes()`가 넌센스 퀴즈 5개를 `Quiz` 객체로 만들어 돌려주고, `QuizGame`이 시작할 때 이 목록을 불러옵니다. 호출할 때마다 새 목록을 만들기 때문에, 게임 중 퀴즈 목록이 바뀌어도 기본 데이터는 영향을 받지 않습니다. 전체 출력은 [docs/logs/04-default-quizzes.log](docs/logs/04-default-quizzes.log)에 있습니다.
 
-### 8.5 퀴즈 풀기
+### 9.5 퀴즈 풀기
 
 `feature/play-quiz` 브랜치에서 작업하고 `main`에 병합했습니다. `play()`가 퀴즈를 차례로 출제하고, 정답 입력은 메뉴와 같은 `read_number()`로 1~4 범위를 검증합니다. 점수는 `정답 수 / 전체 문제 수 * 100`을 반올림해 100점 만점으로 계산합니다. 전체 출력은 [docs/logs/05-play.log](docs/logs/05-play.log)에 있습니다.
 
@@ -154,7 +193,7 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 | 풀이 중 입력 스트림 종료 | 안내 후 종료 코드 0 |
 | 퀴즈 목록이 비어 있음 | 퀴즈 없음 안내 후 메뉴로 복귀 |
 
-### 8.6 state.json 저장/불러오기
+### 9.6 state.json 저장/불러오기
 
 프로그램을 시작할 때 `load()`로 불러오고, 종료할 때 `save()`로 저장합니다. Ctrl+C나 입력 스트림 종료로 끝나도 저장합니다. `Quiz` 객체는 JSON으로 바로 저장할 수 없어서 `to_dict()`로 딕셔너리로 바꾸고, 불러올 때는 `from_dict()`가 형식을 검사한 뒤 객체로 되돌립니다. 전체 출력은 [docs/logs/06-state-json.log](docs/logs/06-state-json.log)에 있습니다.
 
@@ -170,7 +209,7 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 | 읽기/쓰기 오류 | 안내 후 계속 실행, 종료 코드 0 |
 | 다른 폴더에서 실행 | 프로젝트 루트의 `state.json` 사용 |
 
-### 8.7 퀴즈 추가
+### 9.7 퀴즈 추가
 
 `add_quiz()`가 문제, 선택지 4개, 정답 번호를 입력받아 목록에 추가하고 바로 `state.json`에 저장합니다. 문자열은 `read_text()`로 빈 입력을 걸러 내고, 정답 번호는 `read_number()`를 재사용합니다. 전체 출력은 [docs/logs/07-add-quiz.log](docs/logs/07-add-quiz.log)에 있습니다.
 
@@ -182,11 +221,11 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 | 입력 도중 입력 스트림 종료 | 미완성 퀴즈는 추가하지 않고 안전하게 종료 |
 | 저장 실패 | 안내 후 계속 실행 |
 
-### 8.8 퀴즈 목록
+### 9.8 퀴즈 목록
 
 `list_quizzes()`가 등록된 퀴즈의 문제를 번호와 함께 출력합니다. 풀기 전에 답이 보이지 않도록 정답은 출력하지 않고, 목록이 비어 있으면 안내 후 메뉴로 돌아갑니다. 전체 출력은 [docs/logs/08-list-quiz.log](docs/logs/08-list-quiz.log)에 있습니다.
 
-### 8.9 점수 확인
+### 9.9 점수 확인
 
 게임이 끝나면 `update_best_score()`가 최고 점수와 비교하고, 더 높을 때만 기록을 바꿔 바로 저장합니다. 메뉴 4번의 `show_score()`로 확인합니다. 아직 풀지 않은 상태는 `null`로 저장해서 0점 기록과 구분합니다. 전체 출력은 [docs/logs/09-score.log](docs/logs/09-score.log)에 있습니다.
 
@@ -198,7 +237,7 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 | 최고 점수보다 높음 | 갱신 후 저장 |
 | 재실행 | 최고 점수 유지 |
 
-### 8.10 QuizGame 구조 정리
+### 9.10 QuizGame 구조 정리
 
 `QuizGame`이 맡던 JSON 파일 읽기와 쓰기를 `quiz_storage.py`의 `QuizStorage` 클래스로 분리했습니다. `QuizGame`의 `load()`와 `save()`는 그대로 두고, 게임 상태를 검사하고 안내 문구를 출력하는 일만 맡습니다. 반복되던 구분선과 안내 문구는 클래스 속성으로 모았습니다.
 
@@ -210,7 +249,7 @@ Windows의 기본 인코딩(cp949)에서는 출력이 파이프로 연결될 때
 
 리팩터링 전후로 같은 입력을 넣어 전체 출력을 비교했고 완전히 일치했습니다. 결과는 [docs/logs/10-refactor.log](docs/logs/10-refactor.log)에 있습니다.
 
-### 8.11 clone/pull 실습
+### 9.11 clone/pull 실습
 
 저장소를 별도 폴더에 `git clone`으로 복제해 이 문단을 추가하고, 기존 작업 폴더에서 `git pull`로 받았습니다.
 
@@ -230,19 +269,21 @@ Fast-forward
 
 | 명령 | 역할 | 사용한 곳 |
 | --- | --- | --- |
-| `git init` | 폴더를 Git 저장소로 만듦 | [8.1](#81-git-저장소-설정) |
+| `git init` | 폴더를 Git 저장소로 만듦 | [9.1](#91-git-저장소-설정) |
 | `git add` | 커밋에 넣을 변경을 고름 | 모든 단계 |
 | `git commit` | 고른 변경을 이력으로 저장 | 모든 단계 |
 | `git push` | 로컬 커밋을 원격에 올림 | 모든 단계 |
-| `git pull` | 원격 변경을 받아 합침 | [8.1](#81-git-저장소-설정), 이 문단 |
-| `git checkout` | 브랜치를 만들거나 이동 | [8.5](#85-퀴즈-풀기) |
+| `git pull` | 원격 변경을 받아 합침 | [9.1](#91-git-저장소-설정), 이 문단 |
+| `git checkout` | 브랜치를 만들거나 이동 | [9.5](#95-퀴즈-풀기) |
 | `git clone` | 원격 저장소를 복제 | 이 문단 |
 
-### 8.12 최종 검증
+### 9.12 최종 검증
 
 GitHub에서 복제한 최신 코드로 입력 처리, 데이터 파일 복구, 점수 유지, 퀴즈 추가 유지를 다시 확인했습니다. 전체 출력은 [docs/logs/13-final-test.log](docs/logs/13-final-test.log)에 있습니다.
 
-## 9. 트러블슈팅
+자동 테스트에서는 Ctrl+C를 `input()`이 `KeyboardInterrupt`를 내도록 바꿔 확인했고, 실제 키 입력은 VS Code 터미널에서 직접 눌러 확인했습니다([7. 실행 화면](#7-실행-화면)).
+
+## 10. 트러블슈팅
 
 ### 트러블슈팅 1: 출력을 파이프로 연결하면 이모지에서 프로그램이 종료됨
 

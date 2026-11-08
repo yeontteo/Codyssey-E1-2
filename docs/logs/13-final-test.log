@@ -71,3 +71,6 @@ run() 정상 반환
 ## 13. 다른 폴더에서 실행
 📂 저장된 데이터를 불러왔습니다. (퀴즈 6개, 최고점수 80점)
 ls: cannot access 'state.json': No such file or directory
+
+## 4-1. 실제 Ctrl+C 입력
+VS Code 터미널에서 메뉴 입력 중 Ctrl+C를 눌러 안내 후 종료되는 것을 확인했다. 화면은 docs/screenshots/ctrl_c.png에 있다.
