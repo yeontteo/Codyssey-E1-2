@@ -1,0 +1,23 @@
+# 코드 단순화 전후의 실행 출력 비교
+# 메뉴, 풀기, 추가, 목록, 점수, 입력 종료, 손상 파일, 저장 실패 등 22개 시나리오와 다른 폴더 실행을 같은 입력으로 실행
+트레이스백: 0건
+
+## 점수 확인 줄 (의도한 변경: 정답 수 표시 제거)
+1c1
+< 선택: 🏆 최고 점수: 100점 (5문제 중 5문제 정답)
+---
+> 선택: 🏆 최고 점수: 100점
+
+## 그 밖의 화면 출력 차이 (저장 실패 시나리오만 해당)
+610c610
+< 문제를 입력하세요: 선택지 1: 선택지 2: 선택지 3: 선택지 4: 정답 번호 (1-4): ⚠️ 데이터를 저장하지 못했습니다. ([WinError 5] 액세스가 거부되었습니다: 'C:\\Users\\yeonseo\\codyssey\\E1-2\\state.json.tmp' -> 'C:\\Users\\yeonseo\\codyssey\\E1-2\\state.json')
+---
+> 문제를 입력하세요: 선택지 1: 선택지 2: 선택지 3: 선택지 4: 정답 번호 (1-4): ⚠️ 데이터를 저장하지 못했습니다. ([Errno 13] Permission denied: 'C:\\Users\\yeonseo\\codyssey\\E1-2\\state.json')
+612c612
+< ⚠️ 퀴즈는 추가했지만 파일에 저장하지 못해 종료하면 사라질 수 있습니다.
+---
+> ✅ 퀴즈가 추가되었습니다!
+621c621
+< ⚠️ 데이터를 저장하지 못했습니다. ([WinError 5] 액세스가 거부되었습니다: 'C:\\Users\\yeonseo\\codyssey\\E1-2\\state.json.tmp' -> 'C:\\Users\\yeonseo\\codyssey\\E1-2\\state.json')
+---
+> ⚠️ 데이터를 저장하지 못했습니다. ([Errno 13] Permission denied: 'C:\\Users\\yeonseo\\codyssey\\E1-2\\state.json')

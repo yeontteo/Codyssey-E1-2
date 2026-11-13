@@ -6,7 +6,7 @@
 
 터미널에서 동작하는 넌센스 퀴즈 게임입니다. 메뉴에서 번호를 골라 퀴즈를 풀고, 새 퀴즈를 추가하고, 목록과 최고 점수를 확인할 수 있습니다.
 
-Python 클래스로 코드를 역할별로 나누고, 퀴즈와 최고 점수를 `state.json`에 저장해 프로그램을 다시 실행해도 유지되도록 했습니다. 변경 이력은 기능 단위 커밋과 브랜치 병합으로 Git에 기록했습니다.
+Python 클래스 2개(`Quiz`, `QuizGame`)로 코드를 역할별로 나누고, 퀴즈와 최고 점수를 `state.json`에 저장해 프로그램을 다시 실행해도 유지되도록 했습니다. 변경 이력은 기능 단위 커밋과 브랜치 병합으로 Git에 기록했습니다.
 
 ## 2. 퀴즈 주제와 선정 이유
 
@@ -33,7 +33,7 @@ python main.py
 | 1 | 퀴즈 풀기 | 등록된 퀴즈를 차례로 출제하고 정답 여부와 결과 점수를 보여 줍니다 |
 | 2 | 퀴즈 추가 | 문제, 선택지 4개, 정답 번호를 입력받아 바로 저장합니다 |
 | 3 | 퀴즈 목록 | 등록된 문제를 번호와 함께 보여 줍니다 |
-| 4 | 점수 확인 | 최고 점수와 그때의 정답 수를 보여 줍니다 |
+| 4 | 점수 확인 | 최고 점수를 보여 줍니다 |
 | 5 | 종료 | 데이터를 저장하고 종료합니다 |
 
 공통 처리는 다음과 같습니다.
@@ -48,9 +48,7 @@ python main.py
 .
 ├── main.py             # 프로그램 시작
 ├── quiz.py             # Quiz 클래스: 문제 하나의 데이터와 동작
-├── quiz_game.py        # QuizGame 클래스: 메뉴, 입력, 게임 진행, 점수
-├── quiz_storage.py     # QuizStorage 클래스: state.json 읽기와 쓰기
-├── default_quizzes.py  # 기본 넌센스 퀴즈 5개
+├── quiz_game.py        # QuizGame 클래스: 메뉴, 입력, 게임 진행, 점수, 저장/불러오기 + 기본 퀴즈 5개
 ├── state.json          # 실행 시 생성되는 데이터 파일 (Git 제외)
 ├── .gitignore
 ├── README.md
@@ -79,9 +77,7 @@ python main.py
             "answer": 2
         }
     ],
-    "best_score": 100,
-    "best_correct": 5,
-    "best_total": 5
+    "best_score": 100
 }
 ```
 
@@ -92,8 +88,6 @@ python main.py
 | `quizzes[].choices` | list | 선택지 4개 |
 | `quizzes[].answer` | int | 정답 번호 (1~4) |
 | `best_score` | int 또는 null | 최고 점수 (0~100), 아직 풀지 않았으면 `null` |
-| `best_correct` | int 또는 null | 최고 점수를 낸 게임의 정답 수 |
-| `best_total` | int 또는 null | 최고 점수를 낸 게임의 문제 수 |
 
 ## 7. 실행 화면
 
@@ -282,6 +276,20 @@ Fast-forward
 GitHub에서 복제한 최신 코드로 입력 처리, 데이터 파일 복구, 점수 유지, 퀴즈 추가 유지를 다시 확인했습니다. 전체 출력은 [docs/logs/13-final-test.log](docs/logs/13-final-test.log)에 있습니다.
 
 자동 테스트에서는 Ctrl+C를 `input()`이 `KeyboardInterrupt`를 내도록 바꿔 확인했고, 실제 키 입력은 VS Code 터미널에서 직접 눌러 확인했습니다([7. 실행 화면](#7-실행-화면)).
+
+### 9.13 코드 단순화
+
+직접 읽고 다시 작성하기 쉽도록 코드를 단순하게 정리했습니다. 미션 요구사항(클래스 2개 이상, 입력 검증, Ctrl+C/EOF 처리, 파일 없음/손상 복구, `state.json` 저장)은 그대로 유지합니다. 9.4, 9.6, 9.10의 파일과 클래스 설명은 정리 전 구조의 기록입니다.
+
+| 정리 전 | 정리 후 |
+| --- | --- |
+| 파일 5개, 클래스 3개 (`Quiz`, `QuizGame`, `QuizStorage`) | 파일 3개, 클래스 2개 (`Quiz`, `QuizGame`) |
+| `default_quizzes.py`, `quiz_storage.py` 분리 | `quiz_game.py`에 합침 |
+| `Quiz.from_dict()`로 항목별 검사 | `load()`에서 `try/except` 하나로 손상 처리 |
+| 임시 파일에 쓴 뒤 교체해 저장 | `state.json`에 바로 저장 |
+| 최고 점수와 그때의 정답 수, 문제 수 저장 | 최고 점수(`best_score`)만 저장 |
+
+같은 입력으로 정리 전후의 출력을 비교했습니다. 점수 확인 줄에서 정답 수 표시가 빠진 것과 저장 실패 시 오류 문구가 달라진 것 외에는 같았습니다. 결과는 [docs/logs/14-simplify.log](docs/logs/14-simplify.log)에 있습니다.
 
 ## 10. 트러블슈팅
 
